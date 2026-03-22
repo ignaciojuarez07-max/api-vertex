@@ -1,19 +1,19 @@
 <?php
-// Datos optimizados para Render -> Supabase
-$host = "aws-0-us-west-2.pooler.supabase.com"; // Verifica tu región en Supabase si esta no funciona
+// Intento con puerto estándar 5432
+$host = "db.nuzjtrrutyplgatwduxg.supabase.co"; 
 $port = "5432"; 
 $dbname = "postgres";
-$user = "postgres.nuzjtrrutyplgatwduxg"; // IMPORTANTE: Supabase pide el usuario con el ID del proyecto
+$user = "postgres"; // Aquí vuelve a ser solo postgres
 $password = "EstadosUnidos03";
 
 try {
-    // Conexión usando el puerto 6543 y el usuario completo
-    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
+    // Agregamos un timeout para que no se quede colgado
+    $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
+    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password, $options);
     
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->exec("SET NAMES 'utf8'");
 
 } catch (PDOException $e) {
-    die("Error de conexión a la nube: " . $e->getMessage());
+    die("Error de conexión: " . $e->getMessage());
 }
 ?>
