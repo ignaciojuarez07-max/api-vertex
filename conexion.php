@@ -1,7 +1,7 @@
 <?php
 // Datos optimizados para Render -> Supabase
 $host = "aws-0-us-west-2.pooler.supabase.com"; // Verifica tu región en Supabase si esta no funciona
-$port = "6543"; 
+$port = "5432"; 
 $dbname = "postgres";
 $user = "postgres.nuzjtrrutyplgatwduxg"; // IMPORTANTE: Supabase pide el usuario con el ID del proyecto
 $password = "EstadosUnidos03";
