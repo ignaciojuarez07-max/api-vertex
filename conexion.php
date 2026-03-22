@@ -1,23 +1,19 @@
 <?php
-// Datos de tu nueva base de datos en Supabase
-$host = "db.nuzjtrrutyplgatwduxg.supabase.co";
-$port = "5432";
+// Datos optimizados para Render -> Supabase
+$host = "aws-0-us-west-2.pooler.supabase.com"; // Verifica tu región en Supabase si esta no funciona
+$port = "6543"; 
 $dbname = "postgres";
-$user = "postgres";
+$user = "postgres.nuzjtrrutyplgatwduxg"; // IMPORTANTE: Supabase pide el usuario con el ID del proyecto
 $password = "EstadosUnidos03";
 
 try {
-    // La conexión ahora apunta al host de la nube
+    // Conexión usando el puerto 6543 y el usuario completo
     $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
     
-    // Configuramos para que nos avise si hay errores
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-    // Opcional: Esto ayuda con caracteres especiales
     $conn->exec("SET NAMES 'utf8'");
 
 } catch (PDOException $e) {
-    // Si falla, nos dirá exactamente por qué
     die("Error de conexión a la nube: " . $e->getMessage());
 }
 ?>
