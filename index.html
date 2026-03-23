@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertex Mobile - Equipos Premium</title>
+    <style>
+        :root { --apple-blue: #0071e3; --apple-gray-bg: #f5f5f7; --apple-text-dark: #1d1d1f; --apple-nav-bg: rgba(0, 0, 0, 0.85); }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; background-color: var(--apple-gray-bg); margin: 0; padding: 0; color: var(--apple-text-dark); overflow-x: hidden; }
+        
+        .nav-bar { background-color: var(--apple-nav-bg); backdrop-filter: blur(20px); position: fixed; top: 0; width: 100%; height: 48px; display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .nav-content { display: flex; align-items: center; gap: 15px; }
+        .nav-logo { height: 30px; width: auto; }
+        .nav-bar h2 { color: rgba(255, 255, 255, 0.95); margin: 0; font-size: 1.2em; font-weight: bold; }
+        
+        .contenedor-carrito { position: absolute; right: 20px; display: flex; align-items: center; cursor: pointer; transition: transform 0.2s; }
+        .icono-carrito { width: 22px; height: 22px; }
+        .burbuja-carrito { background-color: #E3000F; color: white; font-size: 11px; font-weight: bold; border-radius: 50%; padding: 2px 6px; position: absolute; top: -6px; right: -8px; display: flex; justify-content: center; align-items: center; }
+
+        .hero { background-color: #ffffff; text-align: center; padding: 120px 20px 40px 20px; margin-top: 48px; position: relative; }
+        .hero h1 { margin: 0; font-size: 3.8em; font-weight: bold; color: #000000; line-height: 1.1; letter-spacing: -1px; }
+        .hero p { color: #566573; font-size: 1.5em; margin-top: 25px; max-width: 800px; margin-left: auto; margin-right: auto; font-weight: lighter; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 35px; max-width: 1300px; margin: 0 auto; padding: 40px 20px 100px 20px; }
+        .card { background: white; border-radius: 25px; padding: 35px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.03); transition: transform 0.3s; display: flex; flex-direction: column; justify-content: space-between; }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+        .imagen-iphone { max-width: 220px; height: 220px; object-fit: contain; margin-bottom: 25px; display: block; margin-left: auto; margin-right: auto; }
+        .modelo { font-size: 1.8em; font-weight: bold; margin-bottom: 5px; color: #000000; }
+        .etiqueta { background-color: var(--apple-gray-bg); color: #566573; padding: 8px 16px; border-radius: 25px; font-size: 0.95em; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+        .precio { font-size: 1.6em; font-weight: bold; color: #000000; margin-bottom: 25px; }
+        .btn-comprar { background-color: var(--apple-blue); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 1.1em; font-weight: bold; cursor: pointer; width: 100%; transition: background 0.2s; }
+        .btn-comprar:hover { background-color: #0d47a1; }
+
+        /* PANEL LATERAL DEL CARRITO */
+        .overlay-carrito { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1999; display: none; }
+        .panel-carrito { position: fixed; top: 0; right: -400px; width: 100%; max-width: 380px; height: 100%; background: white; z-index: 2000; box-shadow: -5px 0 15px rgba(0,0,0,0.1); transition: right 0.3s ease; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
+        .item-agregado { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+        .item-agregado img { width: 60px; height: 60px; object-fit: contain; }
+        .btn-ver-carrito { background: white; color: var(--apple-blue); border: 1px solid var(--apple-blue); padding: 14px; border-radius: 25px; font-size: 1em; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 12px; }
+        .btn-pagar-pedido { background: var(--apple-blue); color: white; border: none; padding: 14px; border-radius: 25px; font-size: 1em; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="nav-bar">
+        <div class="nav-content">
+            <img src="logoApple.png" alt="Logo" class="nav-logo">
+            <h2>Vertex Mobile</h2>
+        </div>
+        <div class="contenedor-carrito" onclick="abrirPanel()">
+            <svg class="icono-carrito" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span class="burbuja-carrito" id="contador-carrito">0</span>
+        </div>
+    </div>
+
+    <div class="overlay-carrito" id="overlay" onclick="cerrarPanel()"></div>
+    <div class="panel-carrito" id="panelCarrito">
+        <div class="panel-header">
+            <h3>Artículo agregado al carrito</h3>
+            <button style="border:none; background:none; cursor:pointer; font-size:1.5em;" onclick="cerrarPanel()">✕</button>
+        </div>
+        <div class="item-agregado" id="ultimoItem"></div>
+        <button class="btn-ver-carrito" onclick="window.location.href='carrito.html'">Ver carrito (<span id="btn-count">0</span>)</button>
+        <button class="btn-pagar-pedido" onclick="window.location.href='checkout.html'">Pagar pedido</button>
+        <button style="background:none; border:none; color:#0071e3; cursor:pointer;" onclick="cerrarPanel()">Seguir comprando</button>
+    </div>
+
+    <div class="hero">
+        <h1>Rendimiento legendario.<br>Precio inteligente.</h1>
+        <p>Encuentra el iPhone que amas inspeccionado y certificado.</p>
+        
+        <img src="banner_vertex.png" alt="Banner Vertex Mobile" style="width: 100%; max-width: 1100px; height: auto; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); margin-top: 40px; display: block; margin-left: auto; margin-right: auto;">
+    </div>
+
+    <div class="grid" id="contenedor-iphones"></div>
+
+    <script>
+        let carritoDeCompras = [];
+        try {
+            carritoDeCompras = JSON.parse(localStorage.getItem('carritoVertex')) || [];
+        } catch(e) {
+            carritoDeCompras = [];
+        }
+
+        function actualizarContador() {
+            const count = carritoDeCompras.length;
+            document.getElementById('contador-carrito').innerText = count;
+            document.getElementById('btn-count').innerText = count;
+        }
+
+        function cargarInventario() {
+            fetch('https://api-vertex-sdua.onrender.com/get_iphones.php')
+                .then(r => r.json())
+                .then(datos => {
+                    const contenedor = document.getElementById('contenedor-iphones');
+                    contenedor.innerHTML = ''; 
+
+                    // Seguro contra errores: validamos que sí lleguen los teléfonos
+                    if (Array.isArray(datos)) {
+                        datos.forEach(iphone => {
+                            const tarjeta = document.createElement('div');
+                            tarjeta.className = 'card';
+                            
+                            let estadoTxt = ""; let colorEtiqueta = "";
+                            const bat = iphone.bateria_porc;
+
+                            if (bat == 100) { estadoTxt = "Nuevo"; colorEtiqueta = "#E8F5E9"; }
+                            else if (bat >= 90) { estadoTxt = "Seminuevo"; colorEtiqueta = "#FFF9C4"; }
+                            else if (bat >= 80) { estadoTxt = "Reacondicionado"; colorEtiqueta = "#E3F2FD"; }
+                            else { estadoTxt = "Uso"; colorEtiqueta = "#F5F5F5"; }
+
+                            const precioForm = iphone.precio ? `Q ${parseFloat(iphone.precio).toLocaleString('es-GT', {minimumFractionDigits: 2})}` : 'Q -.--';
+                            
+                            tarjeta.innerHTML = `
+                                <div>
+                                    <img src="${iphone.url_imagen}" class="imagen-iphone" onerror="this.src='https://via.placeholder.com/220x220?text=Sin+Imagen'">
+                                    <div class="modelo">${iphone.modelo}</div>
+                                    <div class="etiqueta">${iphone.capacidad_gb} GB</div>
+                                    <div class="precio">${precioForm}</div>
+                                    <div style="margin-top:10px;">
+                                        <strong>🔋 Batería:</strong> ${bat}% <br><br>
+                                        <span style="background:${colorEtiqueta}; padding:6px 12px; border-radius:15px; font-weight:bold; font-size:0.85em;">
+                                            ✨ ${estadoTxt}
+                                        </span>
+                                    </div>
+                                </div>
+                                <button class="btn-comprar" style="margin-top:20px;" onclick="agregarAlCarrito(${iphone.id}, '${iphone.modelo}', ${iphone.precio || 0}, '${iphone.url_imagen}', ${iphone.capacidad_gb}, ${bat})">Agregar al carrito</button>
+                            `;
+                            contenedor.appendChild(tarjeta);
+                        });
+                    } else {
+                        console.error("Error: El servidor no envió una lista de iPhones válida.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error de conexión con la base de datos:", error);
+                });
+        }
+
+        function agregarAlCarrito(id, modelo, precio, imagen, capacidad, bateria) {
+            if (carritoDeCompras.find(i => i.id === id)) { abrirPanel(); return; }
+            const prod = { id, modelo, precio, imagen, capacidad, bateria_porc: bateria };
+            carritoDeCompras.push(prod);
+            localStorage.setItem('carritoVertex', JSON.stringify(carritoDeCompras));
+            actualizarContador();
+            mostrarUltimoItem(prod);
+            abrirPanel();
+        }
+
+        function mostrarUltimoItem(p) {
+            document.getElementById('ultimoItem').innerHTML = `
+                <img src="${p.imagen}" onerror="this.src='https://via.placeholder.com/60x60?text=Img'">
+                <div style="text-align:left;">
+                    <div style="font-weight:bold;">${p.modelo}</div>
+                    <div style="font-size:0.8em; color:#777;">${p.capacidad} GB | Batería: ${p.bateria_porc}%</div>
+                </div>
+            `;
+        }
+
+        function abrirPanel() {
+            document.getElementById('overlay').style.display = 'block';
+            setTimeout(() => { document.getElementById('panelCarrito').style.right = '0'; }, 10);
+        }
+
+        function cerrarPanel() {
+            document.getElementById('panelCarrito').style.right = '-400px';
+            setTimeout(() => { document.getElementById('overlay').style.display = 'none'; }, 300);
+        }
+
+        cargarInventario();
+        actualizarContador();
+    </script>
+</body>
+</html>

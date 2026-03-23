@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tu Carrito - Vertex Mobile</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background-color: #fff; margin: 0; color: #111; padding-bottom: 100px; }
+        .nav-bar { background-color: rgba(0,0,0,0.85); position: fixed; top: 0; width: 100%; height: 48px; display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .nav-logo { height: 30px; }
+        .contenedor-main { max-width: 900px; margin: 120px auto 0; padding: 0 20px; }
+        .header-carrito { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #ddd; padding-bottom: 20px; margin-bottom: 30px; }
+        .header-carrito h1 { margin: 0; font-size: 2.5em; letter-spacing: -1px; }
+        .item-carrito { display: flex; align-items: center; padding: 30px 0; border-bottom: 1px solid #eee; }
+        .item-img { width: 100px; height: 100px; object-fit: contain; margin-right: 30px; }
+        .item-detalles { flex: 1; }
+        .item-titulo { font-size: 1.4em; font-weight: bold; margin: 0; }
+        .item-specs { color: #555; font-size: 0.95em; margin: 10px 0; }
+        .btn-eliminar { color: #0071e3; background: none; border: none; font-size: 0.9em; cursor: pointer; padding: 0; }
+        .item-precio { font-size: 1.3em; font-weight: 500; }
+        .seccion-total { background: #f5f5f7; padding: 40px; border-radius: 15px; margin-top: 40px; display: flex; justify-content: space-between; align-items: center; }
+        .total-monto { font-size: 2.2em; font-weight: bold; }
+        .btn-pagar { background: #0071e3; color: white; border: none; padding: 18px 40px; border-radius: 25px; font-size: 1.2em; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="nav-bar">
+        <a href="index.html"><img src="logoApple.png" alt="Logo" class="nav-logo"></a>
+    </div>
+
+    <div class="contenedor-main">
+        <div class="header-carrito">
+            <h1>Tu Carrito</h1>
+            <a href="index.html" style="color:#0071e3; text-decoration:none;">Seguir comprando ></a>
+        </div>
+
+        <div id="lista-carrito"></div>
+
+        <div class="seccion-total" id="caja-total" style="display: none;">
+            <div>
+                <div style="font-size:1.5em;">Total:</div>
+                <div class="total-monto" id="monto-total">Q 0.00</div>
+            </div>
+            <button class="btn-pagar" onclick="window.location.href='checkout.html'">Pagar pedido</button>
+        </div>
+    </div>
+
+    <script>
+        let carrito = JSON.parse(localStorage.getItem('carritoVertex')) || [];
+
+        function renderizarCarrito() {
+            const contenedor = document.getElementById('lista-carrito');
+            const cajaTotal = document.getElementById('caja-total');
+            contenedor.innerHTML = '';
+            let total = 0;
+
+            if (carrito.length === 0) {
+                contenedor.innerHTML = '<div style="text-align:center; padding:80px; color:#777; font-size:1.5em;">Tu carrito está vacío.</div>';
+                cajaTotal.style.display = 'none';
+                return;
+            }
+
+            carrito.forEach((item, index) => {
+                total += parseFloat(item.precio || 0);
+                
+                let est = "";
+                const b = item.bateria_porc || 100;
+                if (b == 100) est = "Nuevo";
+                else if (b >= 90) est = "Seminuevo";
+                else if (b >= 80) est = "Reacondicionado";
+                else est = "Uso";
+
+                const tit = item.modelo.toLowerCase().includes('iphone') ? item.modelo : 'iPhone ' + item.modelo;
+
+                contenedor.innerHTML += `
+                    <div class="item-carrito">
+                        <img src="${item.imagen}" class="item-img">
+                        <div class="item-detalles">
+                            <p class="item-titulo">${tit}</p>
+                            <p class="item-specs">Capacidad: ${item.capacidad || 128} GB | Condición: ${est} (${b}%)</p>
+                            <button class="btn-eliminar" onclick="eliminarItem(${index})">Eliminar</button>
+                        </div>
+                        <div class="item-precio">Q ${parseFloat(item.precio || 0).toLocaleString('es-GT', {minimumFractionDigits: 2})}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('monto-total').innerText = `Q ${total.toLocaleString('es-GT', {minimumFractionDigits: 2})}`;
+            cajaTotal.style.display = 'flex';
+        }
+
+        function eliminarItem(index) {
+            carrito.splice(index, 1);
+            localStorage.setItem('carritoVertex', JSON.stringify(carrito));
+            renderizarCarrito();
+        }
+
+        renderizarCarrito();
+    </script>
+</body>
+</html>
