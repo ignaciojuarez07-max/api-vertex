@@ -1,18 +1,17 @@
 <?php
-// Este host es el "traductor" oficial para que Render vea a Supabase
-$host = "aws-0-us-west-2.pooler.supabase.com"; 
+// Datos de conexión a Neon
+$host = "ep-round-block-ammv0ur1-pooler.c-5.us-east-1.aws.neon.tech"; 
 $port = "5432"; 
-$dbname = "postgres";
-$user = "postgres.nuzjtrrutyplgatwduxg"; 
-$password = "EstadosUnidos03";
+$dbname = "neondb";
+$user = "neondb_owner";
+$password = "npg_QgSj6JoBrzv0";
 
 try {
-    // Intentamos la conexión limpia
-    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
+    // A Neon le gusta que le confirmemos el uso de seguridad (sslmode=require)
+    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname;sslmode=require", $user, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->exec("SET NAMES 'utf8'");
 } catch (PDOException $e) {
-    // Si falla, nos dirá el error exacto aquí
     die("Error de conexión: " . $e->getMessage());
 }
 ?>
